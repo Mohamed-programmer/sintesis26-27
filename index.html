@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://gkhhyqimkhryjplpfaxm.supabase.co; connect-src 'self' https://gkhhyqimkhryjplpfaxm.supabase.co wss://gkhhyqimkhryjplpfaxm.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'">
 <title>TaskFlow — Portal de tareas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -326,11 +327,6 @@
   .detail>div,.done-main,.cand-card{min-width:0;}
   .card h3{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .card p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-
-  /* --- imágenes del chat --- */
-  .chat-attach{cursor:pointer;display:flex;align-items:center;font-size:1.3rem;padding:0 4px;}
-  .chat-img{display:block;max-width:100%;max-height:260px;border-radius:10px;cursor:pointer;margin-bottom:4px;background:var(--paper);min-height:60px;}
-  .chat-expired{display:block;font-size:.82rem;opacity:.75;}
 </style>
 </head>
 <body>
@@ -358,9 +354,9 @@
 <div class="view active" id="view-home">
 <header class="hero">
   <div class="wrap">
-    <div class="eyebrow">Tareas puntuales, pago protegido</div>
-    <h1>Encarga el trabajo. Págalo cuando esté hecho.</h1>
-    <p>Publica lo que necesitas, recibe propuestas de gente real y libera el pago solo cuando apruebes la entrega.</p>
+    <div class="eyebrow">Tareas puntuales entre personas</div>
+    <h1>Encarga el trabajo. Apruébalo por entregas.</h1>
+    <p>Publica lo que necesitas, recibe propuestas de gente real y aprueba cada entrega antes de darla por buena.</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="#tareas">Empieza a ver tareas</a>
       <a class="btn btn-ghost" data-view-link="crear">Crear una tarea</a>
@@ -507,7 +503,7 @@
         </div>
         <div>
           <label>Mensaje para el cliente (opcional)</label>
-          <input type="text" id="det-msg" placeholder="Preséntate brevemente">
+          <input type="text" id="det-msg" maxlength="500" placeholder="Preséntate brevemente">
         </div>
         <a class="btn btn-primary" id="det-apply" style="cursor:pointer;">Presentarse a la oferta</a>
         <p id="det-apply-note" style="display:none;margin:0;font-size:.85rem;font-weight:600;color:var(--blue);"></p>
@@ -577,7 +573,7 @@
         </div>
         <p id="mp-photo-msg" style="display:none;margin:0;font-size:.85rem;font-weight:600;"></p>
         <form id="mp-form" style="display:flex;flex-direction:column;gap:18px;">
-          <div class="field"><label for="mp-name">Nombre</label><input id="mp-name" type="text" required></div>
+          <div class="field"><label for="mp-name">Nombre</label><input id="mp-name" type="text" maxlength="60" required></div>
           <div class="field"><label for="mp-email">Correo (no editable)</label><input id="mp-email" type="email" readonly style="opacity:.7;"></div>
           <div class="field"><label for="mp-pass">Nueva contraseña (opcional)</label><input id="mp-pass" type="password" placeholder="Déjala vacía para no cambiarla"></div>
           <div class="field">
@@ -701,7 +697,7 @@
       <a id="show-register" style="font-size:.88rem;font-weight:600;color:var(--blue);cursor:pointer;">¿No tienes cuenta? Crear una</a>
     </form>
     <form class="form-card" id="register-form" style="display:none;">
-      <div class="field"><label for="reg-name">Nombre</label><input id="reg-name" type="text" required></div>
+      <div class="field"><label for="reg-name">Nombre</label><input id="reg-name" type="text" maxlength="60" required></div>
       <div class="field"><label for="reg-email">Correo</label><input id="reg-email" type="email" required></div>
       <div class="field"><label for="reg-pass">Contraseña (mínimo 6 caracteres)</label><input id="reg-pass" type="password" required autocomplete="new-password"></div>
       <div class="field"><label for="reg-pass2">Repite la contraseña</label><input id="reg-pass2" type="password" required autocomplete="new-password"></div>
@@ -752,12 +748,11 @@
     <div class="chat-box">
       <div class="chat-msgs" id="chat-msgs"></div>
       <form class="chat-form" id="chat-form">
-        <label class="chat-attach" for="chat-file" title="Enviar imagen" aria-label="Enviar imagen">📷</label><input type="file" id="chat-file" accept="image/jpeg,image/png,image/webp" style="display:none;">
-        <input id="chat-input" type="text" placeholder="Escribe un mensaje…" autocomplete="off">
+        <input id="chat-input" type="text" maxlength="1000" placeholder="Escribe un mensaje…" autocomplete="off">
         <button class="btn btn-primary btn-small" type="submit">Enviar</button>
       </form>
     </div>
-    <p style="margin-top:14px;font-size:.8rem;color:var(--text-dim);">Para probar la otra parte de la conversación, cierra sesión y entra con la otra cuenta.</p>
+    
   </div>
 </section>
 </div>
@@ -797,7 +792,7 @@
 </section>
 </div>
 
-<footer>© 2026 TaskFlow — Pago protegido en cada tarea · <a id="footer-privacy" style="text-decoration:underline;cursor:pointer;">Privacidad y moderación</a></footer>
+<footer>© 2026 TaskFlow — Tareas puntuales entre personas · <a id="footer-privacy" style="text-decoration:underline;cursor:pointer;">Privacidad y moderación</a></footer>
 
 <button id="bot-fab" class="bot-fab" type="button" aria-label="Abrir asistente virtual">
   <svg viewBox="0 0 24 24" fill="none" stroke="#06122c" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 11h.01M12 11h.01M15 11h.01"/></svg>
@@ -889,10 +884,10 @@
   // ============ DATOS DE CONTACTO: CÁMBIALOS POR LOS REALES ============
   // Deja un campo vacío ('') para que no se muestre.
   var CONTACT = {
-    email: 'soporte@taskflow.example',
-    telefono: '+34 000 000 000',
-    horario: 'Lunes a viernes, de 9:00 a 18:00',
-    direccion: 'Barcelona, España'
+    email: 'elmoudenanass04@gmail.com',
+    telefono: '',
+    horario: '',
+    direccion: ''
   };
 </script>
 <script>
@@ -938,12 +933,12 @@
   function cardHTML(t){
     return '' +
       '<div class="card">' +
-        '<span class="tag">' + t.tag + '</span>' +
+        '<span class="tag">' + esc(t.tag) + '</span>' +
         '<h3>' + esc(clip(t.title, 60)) + '</h3>' +
         '<p>' + esc(clip(t.cardDesc, 90)) + '</p>' +
         '<a class="more" data-task="' + t.id + '">Más información…</a>' +
         '<div class="card-foot">' +
-          '<span class="price">' + t.price + '</span>' +
+          '<span class="price">' + esc(t.price) + '</span>' +
           '<span class="deadline">Se cierra el<b>' + t.date + '</b></span>' +
         '</div>' +
         (isAdmin ? '<a class="admin-del" data-admin-del="' + t.id + '">Eliminar (admin)</a>' : '') +
@@ -959,12 +954,12 @@
     return '' +
       '<div class="card">' +
         '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
-          '<span class="tag">' + t.tag + '</span>' + statusTag +
+          '<span class="tag">' + esc(t.tag) + '</span>' + statusTag +
         '</div>' +
         '<h3>' + esc(clip(t.title, 60)) + '</h3>' +
         '<p>' + esc(clip(t.cardDesc, 90)) + '</p>' +
         '<div class="card-foot">' +
-          '<span class="price">' + t.price + '</span>' +
+          '<span class="price">' + esc(t.price) + '</span>' +
           '<span class="deadline">Se cierra el<b>' + t.date + '</b></span>' +
         '</div>' +
         '<div class="mis-actions">' +
@@ -1250,7 +1245,7 @@
         '<div class="cand-head">' +
           '<span class="cand-name">' + esc(c.name) + '</span>' +
           '<span class="cand-meta">' + (c.userId && getAccount(c.userId) ? ratingOf(getAccount(c.userId)) : c.rating) + '</span>' +
-          '<span class="cand-price">' + c.price + '</span>' +
+          '<span class="cand-price">' + esc(c.price) + '</span>' +
         '</div>' +
         '<p>' + esc(c.message) + '</p>' +
         '<div class="cand-foot">' +
@@ -1418,10 +1413,10 @@
   function pendCardHTML(t){
     var ow = getAccount(t.owner);
     var st = TASK_STATUS[t.id] || {};
-    return '<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="tag">' + t.tag + '</span><span class="tag" style="background:rgba(47,208,232,0.2);color:var(--navy);">' + (st.completed ? 'Completada' : 'En curso') + '</span></div>' +
+    return '<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="tag">' + esc(t.tag) + '</span><span class="tag" style="background:rgba(47,208,232,0.2);color:var(--navy);">' + (st.completed ? 'Completada' : 'En curso') + '</span></div>' +
       '<h3>' + esc(clip(t.title, 60)) + '</h3><p>' + esc(clip(t.cardDesc, 90)) + '</p>' +
       '<p style="font-size:.82rem;">Cliente: <b>' + esc(ow ? ow.name : '—') + '</b></p>' +
-      '<div class="card-foot"><span class="price">' + (st.agreedPrice || t.price) + '</span><span class="deadline">Se cierra el<b>' + t.date + '</b></span></div>' +
+      '<div class="card-foot"><span class="price">' + esc(st.agreedPrice || t.price) + '</span><span class="deadline">Se cierra el<b>' + t.date + '</b></span></div>' +
       '<div class="mis-actions"><a data-chat="' + t.id + '">Abrir chat con el cliente</a><a data-ent="' + t.id + '">Entregas</a></div></div>';
   }
   function renderPendientes(){
@@ -1471,8 +1466,7 @@
       if(m.system) return '<div class="bubble sys">' + esc(m.text) + '</div>';
       var mine = currentUser && m.from === currentUser.id;
       var who = mine ? 'Tú' : esc((getAccount(m.from) || {}).name || '');
-      var im = m.img ? '<img class="chat-img" data-img="' + esc(m.img) + '" alt="Imagen enviada">' : (m.expired ? '<em class="chat-expired">🖼️ Imagen caducada</em>' : '');
-      return '<div class="bubble ' + (mine ? 'me' : 'them') + '">' + im + (m.text ? esc(m.text) : '') + '<small>' + who + ' · ' + m.time + '</small></div>';
+      return '<div class="bubble ' + (mine ? 'me' : 'them') + '">' + esc(m.text) + '<small>' + who + ' · ' + m.time + '</small></div>';
     }).join('');
     box.scrollTop = box.scrollHeight;
   }
@@ -1634,7 +1628,7 @@
     return (acc.completed || []).map(function(j){ return { author: j.client + (j.role ? ' (como ' + j.role + ')' : ''), rating: j.rating.toFixed(1) + ' ★', comment: j.comment }; });
   }
   function setAvatar(el, acc){
-    if(acc.avatar){
+    if(acc.avatar && /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(acc.avatar)){
       el.style.backgroundImage = 'url("' + acc.avatar + '")';
       el.style.backgroundSize = 'cover';
       el.style.backgroundPosition = 'center';
@@ -1999,93 +1993,6 @@
     toast('Valoración enviada. ¡Gracias!', false);
     await loadAll();
   }
-
-  // ================= IMÁGENES DEL CHAT =================
-  var CHAT_IMG_MAX = 5 * 1024 * 1024, CHAT_IMG_URLS = {}, purgingChat = false, lastExpireRun = 0;
-  function compressImage(file){
-    return new Promise(function(res, rej){
-      var fr = new FileReader();
-      fr.onerror = rej;
-      fr.onload = function(){
-        var img = new Image();
-        img.onerror = rej;
-        img.onload = function(){
-          var s = Math.min(1, 1280 / Math.max(img.width, img.height));
-          var cv = document.createElement('canvas');
-          cv.width = Math.max(1, Math.round(img.width * s)); cv.height = Math.max(1, Math.round(img.height * s));
-          var cx = cv.getContext('2d');
-          cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);
-          cx.drawImage(img, 0, 0, cv.width, cv.height);
-          cv.toBlob(function(b){ b ? res(b) : rej(new Error('No se pudo procesar la imagen.')); }, 'image/jpeg', 0.8);
-        };
-        img.src = fr.result;
-      };
-      fr.readAsDataURL(file);
-    });
-  }
-  async function sendChatImage(f){
-    var tid = currentChatTaskId;
-    if(!f || !currentUser || !tid || needSb() || guardBlocked()) return;
-    if(!/^image\/(jpeg|png|webp)$/.test(f.type)) return toast('Solo se admiten imágenes JPG, PNG o WebP.', true);
-    if(f.size > 15 * 1024 * 1024) return toast('La imagen es demasiado grande (máximo 15 MB).', true);
-    var path = null;
-    try {
-      var blob = await compressImage(f);
-      if(blob.size > CHAT_IMG_MAX) return toast('La imagen pesa más de 5 MB incluso comprimida.', true);
-      path = tid + '/' + newId() + '.jpg';
-      var up = await sb.storage.from('chat').upload(path, blob, { contentType: 'image/jpeg', upsert: false });
-      if(up.error) return fail(up.error);
-      var r = await sb.from('messages').insert({ task_id: tid, sender: currentUser.id, body: '', image_path: path });
-      if(r.error){ await sb.storage.from('chat').remove([path]); return fail(r.error); }
-      await loadAll();
-    } catch(e){ fail(e); }
-  }
-  async function hydrateChatImages(){
-    var box = document.getElementById('chat-msgs');
-    var imgs = box.querySelectorAll('img[data-img]');
-    for(var i = 0; i < imgs.length; i++){
-      (function(el){
-        var p = el.dataset.img, c = CHAT_IMG_URLS[p];
-        function show(u){ el.src = u; el.onclick = function(){ window.open(u, '_blank'); }; }
-        if(c && c.exp > Date.now()){ show(c.url); return; }
-        sb.storage.from('chat').createSignedUrl(p, 3600).then(function(r){
-          if(r.error || !r.data) return;
-          CHAT_IMG_URLS[p] = { url: r.data.signedUrl, exp: Date.now() + 3300000 };
-          show(r.data.signedUrl);
-        });
-      })(imgs[i]);
-    }
-  }
-  var _renderChat = renderChat;
-  renderChat = function(){ _renderChat(); if(sb) hydrateChatImages(); };
-  function expireChatImages(){
-    if(!sb || !currentUser || Date.now() - lastExpireRun < 300000) return;
-    lastExpireRun = Date.now();
-    sb.rpc('expire_chat_images').then(function(r){ if(!r.error && Number(r.data) > 0) scheduleReload(); });
-  }
-  // El archivo de una imagen caducada se borra con la API de Storage (la base de datos no puede hacerlo).
-  async function purgeChatImages(){
-    if(purgingChat || !sb || !currentUser) return;
-    var list = [];
-    Object.keys(CHATS).forEach(function(tid){
-      CHATS[tid].forEach(function(m){ if(m.expired && m.img && m.id) list.push(m); });
-    });
-    if(!list.length) return;
-    purgingChat = true;
-    try {
-      for(var i = 0; i < list.length; i++){
-        var rm = await sb.storage.from('chat').remove([list[i].img]);
-        if(rm.error){ console.error(rm.error); continue; }
-        await sb.rpc('chat_image_removed', { p_message: list[i].id });
-      }
-    } catch(e){ console.error(e); }
-    purgingChat = false;
-  }
-  document.getElementById('chat-file').addEventListener('change', function(){
-    var f = this.files && this.files[0];
-    this.value = '';
-    sendChatImage(f);
-  });
 
   // ================= CONTACTO =================
   var CONTACT_ICONS = {
@@ -2588,7 +2495,8 @@
       sb.from('reports').select('*').order('created_at', { ascending: false }),
       sb.from('sanctions').select('*').order('created_at', { ascending: false }),
       sb.from('deliveries').select('*').order('created_at', { ascending: true }),
-      sb.from('reviews').select('*').order('created_at', { ascending: false })
+      sb.from('reviews').select('*').order('created_at', { ascending: false }),
+      sb.from('blocks').select('*')
     ]);
     for(var i = 0; i < 5; i++){ if(res[i].error){ fail(res[i].error); return false; } }
     var profs = res[0].data, tasks = res[1].data, apps = res[2].data, msgs = res[3].data, jobs = res[4].data;
@@ -2597,10 +2505,11 @@
     SANCTIONS = (res[7] && res[7].data) || [];
     DELIVERIES = (res[8] && res[8].data) || [];
     REVIEWS = (res[9] && res[9].data) || [];
+    var BLK = {}; ((res[10] && res[10].data) || []).forEach(function(b){ BLK[b.user_id] = b; });
 
     PROFILES = {};
     profs.forEach(function(p){
-      PROFILES[p.id] = { id: p.id, name: p.name, bio: p.bio, skills: p.skills || [], avatar: p.avatar || '', blockedUntil: p.blocked_until || null, blockedReason: p.blocked_reason || '',
+      PROFILES[p.id] = { id: p.id, name: p.name, bio: p.bio, skills: p.skills || [], avatar: p.avatar || '', blockedUntil: (BLK[p.id] && BLK[p.id].blocked_until) || null, blockedReason: (BLK[p.id] && BLK[p.id].blocked_reason) || '',
         memberSince: 'En TaskFlow desde ' + new Date(p.created_at).getFullYear(), completed: [] };
     });
     jobs.forEach(function(j){
@@ -2629,10 +2538,10 @@
       if(w) TASK_STATUS[t.id] = { status: 'asignada', assignedTo: w.name, assignedUserId: t.assigned_to, agreedPrice: t.agreed_price || t.price, completed: !!t.completed_at, completedAt: t.completed_at || null };
     });
     msgs.forEach(function(m){
-      (CHATS[m.task_id] = CHATS[m.task_id] || []).push({ id: m.id, system: m.system, from: m.sender, text: m.body, time: fmtTime(m.created_at), img: m.image_path || null, expired: !!m.image_expired });
+      (CHATS[m.task_id] = CHATS[m.task_id] || []).push({ system: m.system, from: m.sender, text: m.body, time: fmtTime(m.created_at) });
     });
     renderAll();
-    if(currentUser){ purgeRejectedFiles(); autoApprove(); expireChatImages(); purgeChatImages(); }
+    if(currentUser){ purgeRejectedFiles(); autoApprove(); }
     return true;
   }
 
