@@ -699,7 +699,7 @@
     <form class="form-card" id="register-form" style="display:none;">
       <div class="field"><label for="reg-name">Nombre</label><input id="reg-name" type="text" maxlength="60" required></div>
       <div class="field"><label for="reg-email">Correo</label><input id="reg-email" type="email" required></div>
-      <div class="field"><label for="reg-pass">Contraseña (mínimo 6 caracteres)</label><input id="reg-pass" type="password" required autocomplete="new-password"></div>
+      <div class="field"><label for="reg-pass">Contraseña (mínimo 8 caracteres)</label><input id="reg-pass" type="password" required autocomplete="new-password"></div>
       <div class="field"><label for="reg-pass2">Repite la contraseña</label><input id="reg-pass2" type="password" required autocomplete="new-password"></div>
       <details class="policy-details" id="reg-policy">
         <summary>Leer la política de privacidad y moderación</summary>
@@ -722,7 +722,7 @@
     </form>
     <form class="form-card" id="reset-form" style="display:none;">
       <p style="margin:0;color:var(--text-dim);font-size:.9rem;line-height:1.5;">Elige una contraseña nueva para tu cuenta.</p>
-      <div class="field"><label for="reset-pass">Nueva contraseña (mínimo 6 caracteres)</label><input id="reset-pass" type="password" required autocomplete="new-password"></div>
+      <div class="field"><label for="reset-pass">Nueva contraseña (mínimo 8 caracteres)</label><input id="reset-pass" type="password" required autocomplete="new-password"></div>
       <div class="field"><label for="reset-pass2">Repite la nueva contraseña</label><input id="reset-pass2" type="password" required autocomplete="new-password"></div>
       <p id="reset-error" style="display:none;margin:0;color:#c23b3b;font-size:.88rem;font-weight:600;"></p>
       <button class="btn btn-primary" type="submit" style="align-self:flex-start;">Guardar contraseña</button>
@@ -848,7 +848,7 @@
 
 <template id="privacy-tpl">
 <h4>1. Quién es el responsable</h4>
-<p>El responsable del tratamiento es [Nombre o razón social], con NIF [NIF] y domicilio en [dirección]. Contacto: elmoudenanass04@gmail.com o la página «Contacto».</p>
+<p>El responsable del tratamiento es el titular de TaskFlow. Contacto: elmoudenanass04@gmail.com o la página «Contacto».</p>
 <h4>2. Qué datos guardamos</h4>
 <ul>
 <li>Correo electrónico y contraseña (cifrada): para crear tu cuenta, iniciar sesión y recuperar la contraseña.</li>
@@ -1582,7 +1582,7 @@
     var email = document.getElementById('reg-email').value.trim().toLowerCase();
     var pass = document.getElementById('reg-pass').value, pass2 = document.getElementById('reg-pass2').value;
     if(!name) return bad('Escribe tu nombre.');
-    if(pass.length < 6) return bad('La contraseña debe tener al menos 6 caracteres.');
+    if(pass.length < 8) return bad('La contraseña debe tener al menos 8 caracteres.');
     if(pass !== pass2) return bad('Las contraseñas no coinciden.');
     if(!document.getElementById('reg-accept').checked) return bad('Debes aceptar la política de privacidad para crear la cuenta.');
     err.style.display = 'none';
@@ -1733,7 +1733,7 @@
     var pass = document.getElementById('mp-pass').value;
     var bio = document.getElementById('mp-bio').value.trim();
     if(!name) return flash(msg, 'El nombre no puede estar vacío.', true);
-    if(pass && pass.length < 6) return flash(msg, 'La nueva contraseña debe tener al menos 6 caracteres.', true);
+    if(pass && pass.length < 8) return flash(msg, 'La nueva contraseña debe tener al menos 8 caracteres.', true);
     var r = await sb.from('profiles').update({ name: name, bio: bio }).eq('id', a.id);
     if(r.error) return flash(msg, r.error.message, true);
     if(pass){
@@ -2357,7 +2357,7 @@
   function authError(e){
     var m = ((e && e.message) || '') + ' ' + ((e && e.code) || '');
     if(/already registered|user_already_exists/i.test(m)) return 'Ya existe una cuenta con ese correo.';
-    if(/weak_password|should be at least|at least \d+ char/i.test(m)) return 'La contraseña es demasiado débil (mínimo 6 caracteres).';
+    if(/weak_password|should be at least|at least \d+ char/i.test(m)) return 'La contraseña es demasiado débil (mínimo 8 caracteres).';
     if(/invalid login credentials|invalid_credentials/i.test(m)) return 'Correo o contraseña incorrectos.';
     if(/not confirmed|email_not_confirmed/i.test(m)) return 'Aún no has confirmado tu correo.';
     if(/rate limit|over_email_send_rate_limit|over_request_rate_limit|too many/i.test(m)) return 'Has hecho demasiados intentos seguidos. Espera unos minutos e inténtalo de nuevo.';
@@ -2435,7 +2435,7 @@
     var form = this, err = document.getElementById('reset-error');
     function bad(m){ flash(err, m, true); }
     var p1 = document.getElementById('reset-pass').value, p2 = document.getElementById('reset-pass2').value;
-    if(p1.length < 6) return bad('La contraseña debe tener al menos 6 caracteres.');
+    if(p1.length < 8) return bad('La contraseña debe tener al menos 8 caracteres.');
     if(p1 !== p2) return bad('Las contraseñas no coinciden.');
     var r = await sb.auth.updateUser({ password: p1 });
     if(r.error){
