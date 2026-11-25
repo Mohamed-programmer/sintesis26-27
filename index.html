@@ -128,7 +128,7 @@
   .card p{margin:0;color:var(--text-dim);font-size:0.9rem;line-height:1.5;}
   .card .more{font-size:0.85rem;font-weight:600;color:var(--blue-bright);}
   .card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:14px;border-top:1px solid var(--line);}
-  .price{font-family:'Space Grotesk';font-weight:700;font-size:1.3rem;color:var(--navy);}
+  .card-foot .deadline{margin-left:auto;}
   .deadline{text-align:right;font-size:0.72rem;color:var(--text-dim);line-height:1.4;}
   .deadline b{display:block;color:var(--ink);font-size:0.8rem;}
 
@@ -165,7 +165,6 @@
   .cand-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
   .cand-name{font-family:'Space Grotesk';font-weight:600;}
   .cand-meta{font-size:0.78rem;color:var(--text-dim);}
-  .cand-price{font-family:'Space Grotesk';font-weight:700;color:var(--navy);}
   .cand-card p{margin:0;color:var(--text-dim);font-size:0.92rem;line-height:1.5;}
   .cand-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:4px;}
   .btn-small{padding:8px 18px;font-size:0.85rem;border-radius:8px;}
@@ -202,7 +201,6 @@
   .detail p{color:var(--text-dim);line-height:1.6;font-size:0.95rem;margin:0 0 12px;}
   .detail .due{font-size:0.85rem;color:var(--navy);font-weight:600;}
   .side{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px;height:fit-content;}
-  .side .price{font-size:1.6rem;}
   .side label{font-size:0.8rem;color:var(--text-dim);font-weight:500;}
   .side input{
     width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--line);
@@ -373,11 +371,6 @@
     </div>
     <div class="filters-bar">
       <select id="filter-categoria"><option value="">Todas las categorías</option></select>
-      <select id="filter-orden">
-        <option value="recientes">Más recientes</option>
-        <option value="precio-asc">Precio: menor a mayor</option>
-        <option value="precio-desc">Precio: mayor a menor</option>
-      </select>
     </div>
     <div class="grid" id="tareas-grid"></div>
     <p id="no-results" style="display:none;color:var(--text-dim);margin-top:8px;">No hay tareas que coincidan con tu búsqueda.</p>
@@ -396,7 +389,7 @@
     </div>
     <div>
       <h2>¿Tienes algún problema?</h2>
-      <p>Dudas con pagos, con crear una tarea o con aceptarla: nuestro equipo de soporte te responde.</p>
+      <p>Dudas con crear una tarea, con aceptar a un candidato o con tu cuenta: nuestro equipo de soporte te responde.</p>
       <a class="btn btn-primary" data-view-link="contacto" style="cursor:pointer;">Contacto</a>
     </div>
   </div>
@@ -423,6 +416,10 @@
     <p style="margin:-14px 0 20px;color:var(--text-dim);font-size:.9rem;">Tareas en las que te han aceptado. Entra para hablar con el cliente.</p>
     <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr);" id="pendientes-grid"></div>
     <p id="pendientes-empty" style="display:none;color:var(--text-dim);">Aún no tienes tareas pendientes. Cuando un cliente te acepte, aparecerán aquí con su chat.</p>
+    <div class="section-head" style="margin-top:48px;"><h2>Mis candidaturas</h2></div>
+    <p style="margin:-14px 0 20px;color:var(--text-dim);font-size:.9rem;">Tareas a las que te has presentado y que aún no tienen a nadie aceptado. Habla con el cliente desde aquí antes de que decida.</p>
+    <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr);" id="candidaturas-grid"></div>
+    <p id="candidaturas-empty" style="display:none;color:var(--text-dim);">Aún no te has presentado a ninguna tarea.</p>
   </div>
 </section>
 </div>
@@ -453,15 +450,9 @@
         <label for="descripcion">Descripción</label>
         <textarea id="descripcion" maxlength="2000" placeholder="Cuenta qué necesitas, con qué plazo y cualquier referencia útil" required></textarea>
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="precio">Presupuesto (€)</label>
-          <input id="precio" type="number" inputmode="decimal" min="0.01" max="100000" step="0.01" placeholder="Ej. 50" required>
-        </div>
-        <div class="field">
-          <label for="plazo">Fecha límite</label>
-          <input id="plazo" type="date">
-        </div>
+      <div class="field">
+        <label for="plazo">Fecha límite (opcional)</label>
+        <input id="plazo" type="date">
       </div>
       <button class="btn btn-primary" type="submit" id="crear-submit-btn" style="align-self:flex-start;">Publicar tarea</button>
       <p id="crear-msg" style="display:none;color:var(--blue);font-size:0.9rem;font-weight:600;"></p>
@@ -497,16 +488,13 @@
         </div>
       </div>
       <div class="side">
-        <span class="price" id="det-price">—</span>
-        <div>
-          <label id="det-offer-label">¿No te parece un precio justo? Haz una oferta</label>
-          <input type="number" id="det-offer" inputmode="decimal" min="0.01" max="100000" step="0.01">
-        </div>
+        <p style="margin:0;font-size:.88rem;line-height:1.5;color:var(--text-dim);">Preséntate a esta tarea. Los detalles (y lo que acordéis) los habláis directamente en el chat con el cliente.</p>
         <div>
           <label>Mensaje para el cliente (opcional)</label>
           <input type="text" id="det-msg" maxlength="500" placeholder="Preséntate brevemente">
         </div>
-        <a class="btn btn-primary" id="det-apply" style="cursor:pointer;">Presentarse a la oferta</a>
+        <a class="btn btn-primary" id="det-apply" style="cursor:pointer;">Presentarse a la tarea</a>
+        <a class="btn btn-outline" id="det-prechat" style="cursor:pointer;display:none;">Chat con el cliente</a>
         <p id="det-apply-note" style="display:none;margin:0;font-size:.85rem;font-weight:600;color:var(--blue);"></p>
       </div>
     </div>
@@ -517,7 +505,7 @@
 <div class="view" id="view-candidatos">
 <section class="section">
   <div class="wrap">
-    <a class="see-all" data-view-link="mistareas" style="display:inline-block;margin-bottom:24px;">← Volver a mis tareas</a>
+    <a class="see-all" id="cand-back" data-view-link="mistareas" style="display:inline-block;margin-bottom:24px;">← Volver a mis tareas</a>
     <div class="section-head">
       <h2 id="cand-title">—</h2>
     </div>
@@ -626,7 +614,7 @@
 <section class="section">
   <div class="wrap page-head">
     <h1>Contacto</h1>
-    <p>¿Dudas con un pago, una tarea o tu cuenta? Escríbenos y te respondemos lo antes posible.</p>
+    <p>¿Dudas con una tarea o tu cuenta? Escríbenos y te respondemos lo antes posible.</p>
   </div>
   <div class="wrap">
     <div class="contact-grid" id="contact-grid"></div>
@@ -758,6 +746,24 @@
 </section>
 </div>
 
+<div class="view" id="view-prechat">
+<section class="section">
+  <div class="wrap" style="max-width:720px;">
+    <a class="see-all" id="pc-back" style="display:inline-block;margin-bottom:20px;cursor:pointer;">← Volver</a>
+    <h2 id="pc-title" style="font-size:1.5rem;">—</h2>
+    <p id="pc-sub" style="color:var(--text-dim);margin:6px 0 12px;font-size:.9rem;"></p>
+    <div style="margin:0 0 14px;display:flex;gap:10px;flex-wrap:wrap;"><a class="btn btn-outline btn-small" id="pc-profile" style="cursor:pointer;">Ver perfil</a><a class="btn btn-outline btn-small" id="pc-report" style="cursor:pointer;">Reportar usuario</a></div>
+    <div class="chat-box">
+      <div class="chat-msgs" id="pc-msgs"></div>
+      <form class="chat-form" id="pc-form">
+        <input id="pc-input" type="text" maxlength="1000" placeholder="Escribe un mensaje…" autocomplete="off">
+        <button class="btn btn-primary btn-small" type="submit">Enviar</button>
+      </form>
+    </div>
+  </div>
+</section>
+</div>
+
 <div class="view" id="view-entregas">
 <section class="section">
   <div class="wrap" style="max-width:820px;">
@@ -854,7 +860,7 @@
 <ul>
 <li>Correo electrónico y contraseña (cifrada): para crear tu cuenta, iniciar sesión y recuperar la contraseña.</li>
 <li>Nombre, descripción, aptitudes y foto: forman tu perfil, visible para otros usuarios y para cualquier visitante. Tu correo no se muestra públicamente.</li>
-<li>Tareas, candidaturas, ofertas y mensajes de chat: para que el portal funcione. Las tareas abiertas las puede ver cualquier visitante, tenga o no cuenta; al aceptar a un candidato, la tarea deja de ser pública.</li>
+<li>Tareas, candidaturas y mensajes de chat (incluido el chat previo con los candidatos): para que el portal funcione. Las tareas abiertas las puede ver cualquier visitante, tenga o no cuenta; al aceptar a un candidato, la tarea deja de ser pública.</li>
 <li>Entregas (título, nota y archivos adjuntos): para que el portal funcione. Los archivos de una entrega rechazada se eliminan; los de una entrega aprobada se conservan para que puedas descargarlos.</li>
 <li>Valoraciones: son públicas y muestran el nombre de quien valora, la puntuación, el comentario y la categoría de la tarea.</li>
 <li>Reportes, avisos y bloqueos: para la moderación y la seguridad.</li>
@@ -862,6 +868,7 @@
 </ul>
 <h4>3. Chats y moderación</h4>
 <p>El chat es privado entre el cliente y la persona aceptada, pero está <b>moderado</b>. El equipo de administración tiene acceso técnico a los chats y a las entregas para poder moderar la plataforma; solo debe consultarlos cuando hay un reporte, una sospecha fundada de incumplimiento o una obligación legal.</p>
+<p>Antes de aceptar a nadie, el cliente y cada candidato pueden hablar en un chat previo, privado entre ellos y con las mismas reglas de moderación. Al aceptar a un candidato, solo su conversación pasa a verse como historial en el chat de la tarea.</p>
 <p>Según el caso podemos enviar un aviso, bloquear la cuenta temporalmente (1, 3, 7 o 30 días) o eliminarla. Una cuenta bloqueada no puede crear tareas, presentarse, escribir mensajes, hacer entregas ni editar su perfil. No compartas en el chat contraseñas, tarjetas ni documentos de identidad.</p>
 <h4>4. Base legal</h4>
 <p>Ejecución del contrato (gestionar tu cuenta y el servicio), interés legítimo (moderación, prevención del fraude y seguridad) y obligación legal cuando una autoridad lo requiera.</p>
@@ -904,7 +911,6 @@
   var currentPage = 1;
   var taskCounter = 1;
   var editingId = null;
-  var editingUnit = '';
   var skipResetOnce = false;
 
   var CATEGORIES = [
@@ -924,7 +930,7 @@
   var PROFILES = {};
   var currentUser = null, pendingView = null, currentChatTaskId = null, currentDetailTaskId = null;
   var CHATS = {};
-  var PROTECTED = ['crear','mistareas','miperfil','candidatos','chat','entregas','admin','reportes','reportado'];
+  var PROTECTED = ['crear','mistareas','miperfil','candidatos','chat','prechat','entregas','admin','reportes','reportado'];
   function getAccount(id){ return PROFILES[id]; }
   function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   var CANDIDATES = {};
@@ -933,7 +939,7 @@
   var profileBack = null;
   var isAdmin = false;
   var REPORTS = [], SANCTIONS = [], DELIVERIES = [], REVIEWS = [];
-  var detUnit = '';
+  var PRECHATS = {}, currentPre = null;
 
   function clip(s, n){ s = String(s == null ? '' : s); return s.length > n ? s.slice(0, n).trim() + '…' : s; }
 
@@ -945,7 +951,6 @@
         '<p>' + esc(clip(t.cardDesc, 90)) + '</p>' +
         '<a class="more" data-task="' + t.id + '">Más información…</a>' +
         '<div class="card-foot">' +
-          '<span class="price">' + esc(t.price) + '</span>' +
           '<span class="deadline">Se cierra el<b>' + t.date + '</b></span>' +
         '</div>' +
         (isAdmin ? '<a class="admin-del" data-admin-del="' + t.id + '">Eliminar (admin)</a>' : '') +
@@ -966,7 +971,6 @@
         '<h3>' + esc(clip(t.title, 60)) + '</h3>' +
         '<p>' + esc(clip(t.cardDesc, 90)) + '</p>' +
         '<div class="card-foot">' +
-          '<span class="price">' + esc(t.price) + '</span>' +
           '<span class="deadline">Se cierra el<b>' + t.date + '</b></span>' +
         '</div>' +
         '<div class="mis-actions">' +
@@ -978,16 +982,9 @@
       '</div>';
   }
 
-  function parsePrice(str){
-    var m = /(\d+(?:[.,]\d+)?)/.exec(str || '');
-    if(!m) return null;
-    return parseFloat(m[1].replace(',', '.'));
-  }
-
   function renderTasks(){
     var q = (document.getElementById('search-input').value || '').trim().toLowerCase();
     var cat = document.getElementById('filter-categoria').value;
-    var order = document.getElementById('filter-orden').value;
 
     var matches = TASKS.filter(function(t){
       if(TASK_STATUS[t.id]) return false;
@@ -995,16 +992,6 @@
       var matchesCat = !cat || t.tag === cat;
       return matchesQ && matchesCat;
     });
-
-    if(order === 'precio-asc' || order === 'precio-desc'){
-      matches = matches.slice().sort(function(a, b){
-        var pa = parsePrice(a.price), pb = parsePrice(b.price);
-        if(pa === null && pb === null) return 0;
-        if(pa === null) return 1;
-        if(pb === null) return -1;
-        return order === 'precio-asc' ? pa - pb : pb - pa;
-      });
-    }
 
     var totalPages = Math.max(1, Math.ceil(matches.length / PAGE_SIZE));
     if(currentPage > totalPages) currentPage = totalPages;
@@ -1043,9 +1030,6 @@
   document.getElementById('filter-categoria').addEventListener('change', function(){
     currentPage = 1; renderTasks();
   });
-  document.getElementById('filter-orden').addEventListener('change', function(){
-    currentPage = 1; renderTasks();
-  });
   document.getElementById('search-input').addEventListener('input', function(){
     goToView('home');
     currentPage = 1;
@@ -1069,14 +1053,9 @@
       oc.style.display = 'inline-flex';
       oc.onclick = function(e){ if(e) e.preventDefault(); openUserProfile(t.owner); };
     } else { oc.style.display = 'none'; }
-    document.getElementById('det-price').textContent = t.price;
-    var pn2 = parsePrice(t.price);
-    var um2 = /€(\/.*)$/.exec(t.price);
-    detUnit = um2 ? um2[1] : '';
-    document.getElementById('det-offer').value = pn2 === null ? '' : String(pn2);
-    document.getElementById('det-offer-label').textContent = 'Haz una oferta (€' + detUnit + ')';
     document.getElementById('det-msg').value = '';
     document.getElementById('det-apply-note').style.display = 'none';
+    refreshDetPrechat();
     document.getElementById('det-admin').style.display = isAdmin ? 'flex' : 'none';
     document.getElementById('det-admin-chat').style.display = (isAdmin && TASK_STATUS[id]) ? 'inline-block' : 'none';
     var back = document.getElementById('det-back');
@@ -1094,16 +1073,13 @@
     if(needSb() || guardBlocked()) return;
     if(t.owner === currentUser.id) return say('Esta tarea es tuya, no puedes presentarte a ella.');
     if(TASK_STATUS[t.id]) return say('Esta tarea ya tiene un candidato aceptado.');
-    if((CANDIDATES[t.id] || []).some(function(c){ return c.userId === currentUser.id; })) return say('Ya te has presentado a esta oferta.');
-    var rawOffer = document.getElementById('det-offer').value.trim();
-    var on = Number(rawOffer);
-    if(!/^\d+(\.\d{1,2})?$/.test(rawOffer) || !(on > 0) || on > 100000) return say('La oferta debe ser un número positivo (por ejemplo 50 o 12,50), sin letras ni signos.', true);
-    var price = String(Math.round(on * 100) / 100).replace('.', ',') + '€' + detUnit;
+    if((CANDIDATES[t.id] || []).some(function(c){ return c.userId === currentUser.id; })) return say('Ya te has presentado a esta tarea.');
     var msg = document.getElementById('det-msg').value.trim() || 'Me interesa esta tarea, puedo empezar cuanto antes.';
-    var r = await sb.from('applications').insert({ task_id: t.id, user_id: currentUser.id, price: price, message: msg });
+    var r = await sb.from('applications').insert({ task_id: t.id, user_id: currentUser.id, message: msg });
     if(r.error) return fail(r.error);
-    say('Candidatura enviada. El cliente la verá en "Ver candidatos".');
-    loadAll();
+    say('Candidatura enviada. Ya puedes hablar con el cliente desde «Chat con el cliente».');
+    await loadAll();
+    refreshDetPrechat();
   }
 
   function goToView(name){
@@ -1202,7 +1178,6 @@
 
   function resetCrearForm(){
     editingId = null;
-    editingUnit = '';
     document.getElementById('crear-form').reset();
     document.getElementById('crear-msg').style.display = 'none';
     document.getElementById('crear-heading').textContent = 'Crear una tarea';
@@ -1218,10 +1193,6 @@
     document.getElementById('titulo').value = t.title;
     document.getElementById('categoria').value = t.tag;
     document.getElementById('descripcion').value = t.desc.join('\n\n');
-    var pn = parsePrice(t.price);
-    document.getElementById('precio').value = pn === null ? '' : String(pn);
-    var um = /€(\/.*)$/.exec(t.price);
-    editingUnit = um ? um[1] : '';
     var m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(t.date);
     document.getElementById('plazo').value = m ? (m[3] + '-' + pad2(m[2]) + '-' + pad2(m[1])) : '';
     document.getElementById('crear-heading').textContent = 'Editar tarea';
@@ -1236,27 +1207,27 @@
     return name.split(' ').map(function(w){ return w[0] || ''; }).slice(0, 2).join('').toUpperCase();
   }
 
-  function candCardHTML(c, idx, status){
-    var isAssignedToThis = status && status.status === 'asignada' && status.assignedTo === c.name;
-    var isAssignedToOther = status && status.status === 'asignada' && status.assignedTo !== c.name;
+  function candCardHTML(c, idx, status, canAccept){
+    var isAssignedToThis = status && status.status === 'asignada' && status.assignedUserId === c.userId;
+    var isAssignedToOther = status && status.status === 'asignada' && status.assignedUserId !== c.userId;
     var footHtml;
     if(isAssignedToThis){
       footHtml = '<span class="assigned-note">✓ Candidato aceptado</span><a class="btn btn-primary btn-small" data-chat="1">Abrir chat</a>';
     } else if(isAssignedToOther){
       footHtml = '<span class="muted-note">No seleccionado para esta tarea</span>';
     } else {
-      footHtml = '<a class="btn btn-primary btn-small" data-accept="' + idx + '">Aceptar candidato</a>';
+      footHtml = canAccept ? '<a class="btn btn-primary btn-small" data-accept="' + idx + '">Aceptar candidato</a>' : '';
     }
     return '' +
       '<div class="cand-card">' +
         '<div class="cand-head">' +
           '<span class="cand-name">' + esc(c.name) + '</span>' +
           '<span class="cand-meta">' + (c.userId && getAccount(c.userId) ? ratingOf(getAccount(c.userId)) : c.rating) + '</span>' +
-          '<span class="cand-price">' + esc(c.price) + '</span>' +
         '</div>' +
         '<p>' + esc(c.message) + '</p>' +
         '<div class="cand-foot">' +
           '<a class="btn btn-outline btn-small" data-profile="' + idx + '">Ver perfil</a>' +
+          (status && status.status === 'asignada' ? '' : '<a class="btn btn-outline btn-small" data-prechat="' + idx + '">Chat' + (preMsgs(currentCandTaskId, c.userId).length ? ' (' + preMsgs(currentCandTaskId, c.userId).length + ')' : '') + '</a>') +
           footHtml +
         '</div>' +
       '</div>';
@@ -1270,7 +1241,14 @@
     var list = CANDIDATES[id] || [];
     var status = TASK_STATUS[id];
     var listEl = document.getElementById('cand-list');
-    listEl.innerHTML = list.map(function(c, idx){ return candCardHTML(c, idx, status); }).join('');
+    var canAccept = !!(currentUser && t.owner === currentUser.id);
+    var cb = document.getElementById('cand-back'), admView = !!(isAdmin && currentUser && t.owner !== currentUser.id);
+    cb.dataset.viewLink = admView ? 'admin' : 'mistareas';
+    cb.textContent = admView ? '← Volver a tareas globales' : '← Volver a mis tareas';
+    listEl.innerHTML = list.map(function(c, idx){ return candCardHTML(c, idx, status, canAccept); }).join('');
+    listEl.querySelectorAll('[data-prechat]').forEach(function(el){
+      el.addEventListener('click', function(e){ e.preventDefault(); openPreChat(id, list[Number(el.dataset.prechat)].userId, 'cand-list'); });
+    });
     listEl.querySelectorAll('[data-accept]').forEach(function(el){
       el.addEventListener('click', function(e){
         e.preventDefault();
@@ -1305,7 +1283,8 @@
   function openProfile(taskId, idx){
     var c = (CANDIDATES[taskId] || [])[idx];
     if(!c) return;
-    document.getElementById('perfil-accept-wrap').style.display = 'block';
+    var tkp = TASKS.find(function(x){ return x.id === taskId; });
+    document.getElementById('perfil-accept-wrap').style.display = (tkp && currentUser && tkp.owner === currentUser.id) ? 'block' : 'none';
     document.getElementById('perfil-back').textContent = '← Volver a candidatos';
     profileBack = function(){ openCandidates(taskId); };
     var acc = c.userId ? getAccount(c.userId) : null;
@@ -1313,7 +1292,7 @@
     var av = document.getElementById('perfil-avatar');
     if(acc){ setAvatar(av, acc); } else { av.style.backgroundImage = ''; av.textContent = initials(c.name); }
     document.getElementById('perfil-nombre').textContent = src.name;
-    document.getElementById('perfil-meta').textContent = (acc ? ratingOf(acc) : c.rating) + ' · ' + c.price + ' · ' + src.memberSince;
+    document.getElementById('perfil-meta').textContent = (acc ? ratingOf(acc) : c.rating) + ' · ' + src.memberSince;
     document.getElementById('perfil-bio').textContent = src.bio;
     document.getElementById('perfil-skills').innerHTML = (src.skills || []).map(function(sk){ return '<span class="skill-pill">' + esc(sk) + '</span>'; }).join('');
     var revs = acc ? reviewsOf(acc) : (c.reviews || []);
@@ -1324,7 +1303,7 @@
     var status = TASK_STATUS[taskId];
     var acceptBtn = document.getElementById('perfil-accept');
     if(status && status.status === 'asignada'){
-      if(status.assignedTo === c.name){
+      if(status.assignedUserId === c.userId){
         acceptBtn.textContent = '✓ Candidato aceptado';
         acceptBtn.style.pointerEvents = 'none';
         acceptBtn.style.opacity = '0.7';
@@ -1373,30 +1352,19 @@
     setProfileReport(userId);
     goToView('perfil');
   }
-  document.getElementById('det-offer').addEventListener('keydown', function(e){
-    if(['-', '+', 'e', 'E'].indexOf(e.key) !== -1) e.preventDefault();
-  });
 
   function tomorrowISO(){
     var d = new Date(); d.setDate(d.getDate() + 1);
     return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
   }
   function refreshDateMin(){ document.getElementById('plazo').min = tomorrowISO(); }
-  document.getElementById('precio').addEventListener('keydown', function(e){
-    if(['-', '+', 'e', 'E'].indexOf(e.key) !== -1) e.preventDefault();
-  });
   document.getElementById('crear-form').addEventListener('submit', async function(e){
     e.preventDefault();
     if(!currentUser || needSb() || guardBlocked()) return;
     var msg = document.getElementById('crear-msg');
     var titulo = document.getElementById('titulo').value.trim();
     var descripcion = document.getElementById('descripcion').value.trim();
-    var rawPrice = document.getElementById('precio').value.trim();
     var plazoRaw = document.getElementById('plazo').value;
-    var n = Number(rawPrice);
-    if(!/^\d+(\.\d{1,2})?$/.test(rawPrice) || !(n > 0) || n > 100000){
-      return flash(msg, 'El presupuesto debe ser un número positivo (por ejemplo 50 o 12,50), sin letras ni signos.', true);
-    }
     if(plazoRaw && plazoRaw < tomorrowISO()){
       return flash(msg, 'La fecha límite debe ser a partir de mañana.', true);
     }
@@ -1404,7 +1372,6 @@
       title: titulo, tag: document.getElementById('categoria').value,
       card_desc: descripcion.length > 90 ? descripcion.slice(0, 90).trim() + '…' : descripcion,
       description: descripcion,
-      price: String(Math.round(n * 100) / 100).replace('.', ',') + '€' + editingUnit,
       deadline: plazoRaw || null
     };
     var r;
@@ -1423,7 +1390,7 @@
     return '<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="tag">' + esc(t.tag) + '</span><span class="tag" style="background:rgba(47,208,232,0.2);color:var(--navy);">' + (st.completed ? 'Completada' : 'En curso') + '</span></div>' +
       '<h3>' + esc(clip(t.title, 60)) + '</h3><p>' + esc(clip(t.cardDesc, 90)) + '</p>' +
       '<p style="font-size:.82rem;">Cliente: <b>' + esc(ow ? ow.name : '—') + '</b></p>' +
-      '<div class="card-foot"><span class="price">' + esc(st.agreedPrice || t.price) + '</span><span class="deadline">Se cierra el<b>' + t.date + '</b></span></div>' +
+      '<div class="card-foot"><span class="deadline">Se cierra el<b>' + t.date + '</b></span></div>' +
       '<div class="mis-actions"><a data-chat="' + t.id + '">Abrir chat con el cliente</a><a data-ent="' + t.id + '">Entregas</a></div></div>';
   }
   function renderPendientes(){
@@ -1438,6 +1405,106 @@
     });
     document.getElementById('pendientes-empty').style.display = list.length ? 'none' : 'block';
   }
+
+  // ================= CHAT PREVIO CON CANDIDATOS =================
+  function preMsgs(taskId, candId){ return (PRECHATS[taskId] && PRECHATS[taskId][candId]) || []; }
+  function preBubble(m){
+    var mine = currentUser && m.from === currentUser.id;
+    var who = mine ? 'Tú' : esc((getAccount(m.from) || {}).name || '');
+    return '<div class="bubble ' + (mine ? 'me' : 'them') + '">' + esc(m.text) + '<small>' + who + ' · ' + m.time + '</small></div>';
+  }
+  function openPreChat(taskId, candId, from){
+    var t = TASKS.find(function(x){ return x.id === taskId; });
+    if(!t || !currentUser) return;
+    var isOwner = currentUser.id === t.owner, isCand = currentUser.id === candId;
+    var asAdmin = isAdmin && !isOwner && !isCand;
+    if(!isOwner && !isCand && !asAdmin) return;
+    if(!(CANDIDATES[taskId] || []).some(function(c){ return c.userId === candId; })) return;
+    var cand = getAccount(candId), ow = getAccount(t.owner);
+    var otherId = isOwner ? candId : t.owner, other = getAccount(otherId);
+    currentPre = { taskId: taskId, candidateId: candId, from: from || '', asAdmin: asAdmin };
+    document.getElementById('pc-title').textContent = asAdmin
+      ? 'Chat previo: ' + (ow ? ow.name : '—') + ' ↔ ' + (cand ? cand.name : '—')
+      : 'Chat con ' + (other ? other.name : '—');
+    document.getElementById('pc-sub').textContent = t.title + ' · ' +
+      (asAdmin ? 'Vista de administrador (solo lectura)' : (isOwner ? 'Hablas con un candidato antes de decidir' : 'Hablas con el cliente antes de que decida'));
+    var back = document.getElementById('pc-back');
+    back.textContent = from === 'cand-list' ? '← Volver a candidatos' : (from === 'detalle' ? '← Volver a la tarea' : '← Volver a mis tareas');
+    var pr = document.getElementById('pc-profile');
+    pr.style.display = asAdmin ? 'none' : 'inline-flex';
+    pr.onclick = function(e){
+      if(e) e.preventDefault();
+      openUserProfile(otherId);
+      profileBack = function(){ openPreChat(taskId, candId, from); };
+      document.getElementById('perfil-back').textContent = '← Volver al chat';
+    };
+    var rp = document.getElementById('pc-report');
+    rp.style.display = asAdmin ? 'none' : 'inline-flex';
+    rp.onclick = function(e){ if(e) e.preventDefault(); openReport({ userId: otherId, kind: 'usuario' }); };
+    goToView('prechat');
+    renderPreChat();
+  }
+  function renderPreChat(){
+    if(!currentPre) return;
+    var p = currentPre, box = document.getElementById('pc-msgs');
+    var msgs = preMsgs(p.taskId, p.candidateId), closed = !!TASK_STATUS[p.taskId];
+    box.innerHTML = (msgs.length ? msgs.map(preBubble).join('') : '<div class="bubble sys">Todavía no hay mensajes. Escribe el primero para presentarte o resolver dudas sobre la tarea.</div>') +
+      (closed ? '<div class="bubble sys">La tarea ya tiene un candidato aceptado: este chat está cerrado.</div>' : '');
+    document.getElementById('pc-form').style.display = (p.asAdmin || closed) ? 'none' : 'flex';
+    box.scrollTop = box.scrollHeight;
+  }
+  document.getElementById('pc-back').addEventListener('click', function(e){
+    e.preventDefault();
+    var p = currentPre;
+    if(p && p.from === 'cand-list') openCandidates(p.taskId);
+    else if(p && p.from === 'detalle') openTask(p.taskId);
+    else goToView('mistareas');
+  });
+  document.getElementById('pc-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var inp = document.getElementById('pc-input'), text = inp.value.trim(), p = currentPre;
+    if(!text || !currentUser || !p || p.asAdmin || needSb() || guardBlocked()) return;
+    if(TASK_STATUS[p.taskId]) return toast('Este chat ya está cerrado: la tarea tiene un candidato aceptado.', true);
+    inp.value = '';
+    var tk = (PRECHATS[p.taskId] = PRECHATS[p.taskId] || {});
+    (tk[p.candidateId] = tk[p.candidateId] || []).push({ from: currentUser.id, text: text, time: new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) });
+    renderPreChat();
+    var r = await sb.from('candidate_messages').insert({ task_id: p.taskId, candidate: p.candidateId, sender: currentUser.id, body: text });
+    if(r.error){ fail(r.error); loadAll(); }
+  });
+  function renderCandidaturas(){
+    var grid = document.getElementById('candidaturas-grid');
+    if(!grid) return;
+    var list = currentUser ? TASKS.filter(function(t){
+      return t.owner !== currentUser.id && !TASK_STATUS[t.id] && (CANDIDATES[t.id] || []).some(function(c){ return c.userId === currentUser.id; });
+    }) : [];
+    grid.innerHTML = list.map(function(t){
+      var ow = getAccount(t.owner), n = preMsgs(t.id, currentUser.id).length;
+      return '<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="tag">' + esc(t.tag) + '</span><span class="tag" style="background:rgba(27,86,168,0.08);">Pendiente de respuesta</span></div>' +
+        '<h3>' + esc(clip(t.title, 60)) + '</h3><p>' + esc(clip(t.cardDesc, 90)) + '</p>' +
+        '<p style="font-size:.82rem;">Cliente: <b>' + esc(ow ? ow.name : '—') + '</b></p>' +
+        '<div class="card-foot"><span class="deadline">Se cierra el<b>' + t.date + '</b></span></div>' +
+        '<div class="mis-actions"><a data-pc="' + t.id + '">Chat con el cliente' + (n ? ' (' + n + ')' : '') + '</a><a data-pc-task="' + t.id + '">Ver tarea</a></div></div>';
+    }).join('');
+    grid.querySelectorAll('[data-pc]').forEach(function(el){
+      el.addEventListener('click', function(e){ e.preventDefault(); openPreChat(el.dataset.pc, currentUser.id, 'mistareas'); });
+    });
+    grid.querySelectorAll('[data-pc-task]').forEach(function(el){
+      el.addEventListener('click', function(e){ e.preventDefault(); openTask(el.dataset.pcTask); });
+    });
+    document.getElementById('candidaturas-empty').style.display = list.length ? 'none' : 'block';
+  }
+  function refreshDetPrechat(){
+    var b = document.getElementById('det-prechat');
+    if(!b) return;
+    var t = TASKS.find(function(x){ return x.id === currentDetailTaskId; });
+    var mine = !!(t && currentUser && t.owner !== currentUser.id && !TASK_STATUS[t.id] && (CANDIDATES[t.id] || []).some(function(c){ return c.userId === currentUser.id; }));
+    b.style.display = mine ? 'inline-flex' : 'none';
+  }
+  document.getElementById('det-prechat').addEventListener('click', function(e){
+    e.preventDefault();
+    if(currentUser && currentDetailTaskId) openPreChat(currentDetailTaskId, currentUser.id, 'detalle');
+  });
 
   function openChat(taskId, from){
     var t = TASKS.find(function(x){ return x.id === taskId; });
@@ -1469,7 +1536,9 @@
   function renderChat(){
     var box = document.getElementById('chat-msgs');
     var msgs = CHATS[currentChatTaskId] || [];
-    box.innerHTML = msgs.map(function(m){
+    var stc = TASK_STATUS[currentChatTaskId], prev = stc ? preMsgs(currentChatTaskId, stc.assignedUserId) : [];
+    var prevHtml = prev.length ? '<div class="bubble sys">Conversación previa a la aceptación</div>' + prev.map(preBubble).join('') + '<div class="bubble sys">— Fin de la conversación previa —</div>' : '';
+    box.innerHTML = prevHtml + msgs.map(function(m){
       if(m.system) return '<div class="bubble sys">' + esc(m.text) + '</div>';
       var mine = currentUser && m.from === currentUser.id;
       var who = mine ? 'Tú' : esc((getAccount(m.from) || {}).name || '');
@@ -1497,11 +1566,12 @@
     var ow = getAccount(t.owner), st = TASK_STATUS[t.id];
     var n = (CHATS[t.id] || []).length;
     var meta = esc(t.tag) + ' · ' + (closed
-      ? 'Cliente: ' + esc(ow ? ow.name : '—') + ' ↔ Realiza: ' + esc(st.assignedTo) + ' · Acordado: ' + esc(st.agreedPrice) + ' · ' + n + (n === 1 ? ' mensaje' : ' mensajes')
-      : 'Cliente: ' + esc(ow ? ow.name : '—') + ' · ' + esc(t.price) + ' · Cierra el ' + esc(t.date));
+      ? 'Cliente: ' + esc(ow ? ow.name : '—') + ' ↔ Realiza: ' + esc(st.assignedTo) + ' · ' + n + (n === 1 ? ' mensaje' : ' mensajes')
+      : 'Cliente: ' + esc(ow ? ow.name : '—') + ' · Cierra el ' + esc(t.date));
     return '<div class="done-item"><div class="done-main"><b>' + esc(t.title) + '</b><span class="cand-meta">' + meta + '</span></div>' +
       '<div class="mis-actions" style="border:none;margin:0;padding:0;">' +
       (closed ? '<a data-adm-chat="' + t.id + '">Ver chat</a>' : '') +
+      (!closed && (CANDIDATES[t.id] || []).length ? '<a data-adm-cand="' + t.id + '">Candidatos y chats</a>' : '') +
       '<a data-adm-info="' + t.id + '">Más información</a>' +
       '<a class="danger" data-adm-del="' + t.id + '">Eliminar</a></div></div>';
   }
@@ -1518,6 +1588,9 @@
     [c, o].forEach(function(box){
       box.querySelectorAll('[data-adm-chat]').forEach(function(el){
         el.addEventListener('click', function(e){ e.preventDefault(); openChat(el.dataset.admChat); });
+      });
+      box.querySelectorAll('[data-adm-cand]').forEach(function(el){
+        el.addEventListener('click', function(e){ e.preventDefault(); openCandidates(el.dataset.admCand); });
       });
       box.querySelectorAll('[data-adm-info]').forEach(function(el){
         el.addEventListener('click', function(e){ e.preventDefault(); openTask(el.dataset.admInfo, 'admin'); });
@@ -1653,7 +1726,7 @@
 
   function doneHTML(j){
     return '<div class="done-item"><div class="done-main"><b>' + esc(j.title) + '</b>' +
-      '<span class="cand-meta">' + (j.role ? 'Valoración de ' + esc(j.client) + ' (como ' + esc(j.role) + ')' : 'Cliente: ' + esc(j.client)) + ' · ' + esc(j.date) + (j.price ? ' · ' + esc(j.price) : '') + '</span>' +
+      '<span class="cand-meta">' + (j.role ? 'Valoración de ' + esc(j.client) + ' (como ' + esc(j.role) + ')' : 'Cliente: ' + esc(j.client)) + ' · ' + esc(j.date) + '</span>' +
       '<p>“' + esc(j.comment || 'Sin comentario') + '”</p></div>' +
       '<span class="rating-badge">' + j.rating.toFixed(1) + ' ★</span></div>';
   }
@@ -2036,12 +2109,12 @@
     { keys: ['reportar', 'reporte', 'denunci', 'acoso', 'estafa'], answer: 'Para reportar a una persona abre su perfil y pulsa «Reportar usuario». Para reportar una conversación, abre el chat y pulsa «Reportar chat». Nuestro equipo revisará el reporte y podrá avisar, bloquear temporalmente o eliminar la cuenta.' },
     { keys: ['persona', 'humano', 'soporte', 'contacto', 'telefono', 'email', 'correo', 'ayuda'], answer: 'Puedes hablar con nuestro equipo desde la página «Contacto» del menú: allí tienes el correo, el teléfono y el horario de atención.' },
     { keys: ['eliminar', 'borrar'], answer: 'Solo quien creó la tarea puede eliminarla, desde «Mis tareas» → «Eliminar». Si necesitas que la eliminemos nosotros, escríbenos desde «Contacto».' },
-    { keys: ['pago', 'pagar', 'cobrar', 'dinero', 'comision', 'factura'], answer: 'Los pagos todavía no están disponibles en esta versión: el precio de cada tarea se acuerda entre el cliente y quien la realiza. Cuando se active el pago protegido te lo contaremos aquí. Para dudas, escríbenos desde «Contacto».' },
-    { keys: ['aceptar', 'acepto', 'ver candidatos', 'mis candidatos'], answer: 'En «Mis tareas» pulsa «Ver candidatos» y después «Aceptar candidato». Al aceptar se abre un chat con esa persona y la tarea deja de ser pública.' },
-    { keys: ['presento', 'presentar', 'candidat', 'aplicar', 'postular', 'oferta'], answer: 'Abre la tarea con «Más información», escribe tu oferta (un número positivo) y pulsa «Presentarse a la oferta». El cliente verá tu candidatura y, si te acepta, la tarea aparecerá en «Mis tareas» → «Tareas pendientes».' },
-    { keys: ['creo una tarea', 'crear una tarea', 'crear tarea', 'publicar', 'publico', 'nueva tarea'], answer: 'Inicia sesión y pulsa «Crear tarea». Rellena el título, la categoría, la descripción y el presupuesto (un número positivo). La fecha límite es opcional y debe ser a partir de mañana.' },
-    { keys: ['chat', 'mensaje', 'conversar'], answer: 'El chat se abre cuando un cliente acepta a un candidato. Tú lo encuentras en «Mis tareas» → «Tareas pendientes» (si realizas la tarea) o con el botón «Abrir chat» (si eres el cliente).' },
-    { keys: ['buscar', 'filtrar', 'categoria', 'ordenar'], answer: 'En «Busca tareas» puedes usar el buscador de arriba, filtrar por categoría y ordenar por precio o por fecha.' }
+    { keys: ['pago', 'pagar', 'cobrar', 'dinero', 'comision', 'factura'], answer: 'En TaskFlow no hay pagos ni precios en las tareas: lo que acordéis lo habláis directamente en el chat con la otra persona. Para dudas, escríbenos desde «Contacto».' },
+    { keys: ['aceptar', 'acepto', 'ver candidatos', 'mis candidatos'], answer: 'En «Mis tareas» pulsa «Ver candidatos». Con «Chat» puedes hablar con cada candidato antes de decidir y con «Aceptar candidato» eliges a uno. Al aceptar, se abre el chat de la tarea con esa persona (verás también la conversación previa) y la tarea deja de ser pública.' },
+    { keys: ['presento', 'presentar', 'candidat', 'aplicar', 'postular', 'oferta'], answer: 'Abre la tarea con «Más información», escribe un mensaje de presentación (opcional) y pulsa «Presentarse a la tarea». Después puedes hablar con el cliente desde «Chat con el cliente» o en «Mis tareas» → «Mis candidaturas». Si te acepta, la tarea aparecerá en «Tareas pendientes».' },
+    { keys: ['creo una tarea', 'crear una tarea', 'crear tarea', 'publicar', 'publico', 'nueva tarea'], answer: 'Inicia sesión y pulsa «Crear tarea». Rellena el título, la categoría y la descripción. La fecha límite es opcional y debe ser a partir de mañana.' },
+    { keys: ['chat', 'mensaje', 'conversar'], answer: 'Antes de aceptar a nadie, el cliente y cada candidato pueden hablar en un chat previo (botón «Chat» en los candidatos, o «Chat con el cliente» si te has presentado). Cuando se acepta a un candidato se abre el chat de la tarea: lo encuentras en «Mis tareas» → «Tareas pendientes» (si realizas la tarea) o con «Abrir chat» (si eres el cliente).' },
+    { keys: ['buscar', 'filtrar', 'categoria', 'ordenar'], answer: 'En «Busca tareas» puedes usar el buscador de arriba, filtrar por categoría.' }
   ];
   var BOT_CHIPS = ['¿Cómo creo una tarea?', '¿Cómo me presento a una tarea?', '¿Cómo funcionan los pagos?', 'Hablar con una persona'];
   var BOT_GREETING = '¡Hola! Soy el asistente de TaskFlow (versión inicial). Puedo orientarte sobre cómo crear tareas, presentarte como candidato, el chat y tu perfil. ¿En qué te ayudo?';
@@ -2491,8 +2564,10 @@
   }
 
   function renderAll(){
-    renderTasks(); renderMisTareas(); renderPendientes(); renderNavAccount(); renderAdmin(); renderModeration();
+    renderTasks(); renderMisTareas(); renderPendientes(); renderCandidaturas(); renderNavAccount(); renderAdmin(); renderModeration();
     if(currentChatTaskId && document.getElementById('view-chat').classList.contains('active')) renderChat();
+    if(currentPre && isActive('view-prechat')) renderPreChat();
+    if(isActive('view-detalle')) refreshDetPrechat();
     if(isActive('view-entregas')) renderEntregas();
   }
 
@@ -2509,7 +2584,8 @@
       sb.from('sanctions').select('*').order('created_at', { ascending: false }),
       sb.from('deliveries').select('*').order('created_at', { ascending: true }),
       sb.from('reviews').select('*').order('created_at', { ascending: false }),
-      sb.from('blocks').select('*')
+      sb.from('blocks').select('*'),
+      sb.from('candidate_messages').select('*').order('created_at', { ascending: true })
     ]);
     for(var i = 0; i < 5; i++){ if(res[i].error){ fail(res[i].error); return false; } }
     var profs = res[0].data, tasks = res[1].data, apps = res[2].data, msgs = res[3].data, jobs = res[4].data;
@@ -2519,6 +2595,11 @@
     DELIVERIES = (res[8] && res[8].data) || [];
     REVIEWS = (res[9] && res[9].data) || [];
     var BLK = {}; ((res[10] && res[10].data) || []).forEach(function(b){ BLK[b.user_id] = b; });
+    PRECHATS = {};
+    ((res[11] && res[11].data) || []).forEach(function(m){
+      var tk = (PRECHATS[m.task_id] = PRECHATS[m.task_id] || {});
+      (tk[m.candidate] = tk[m.candidate] || []).push({ id: m.id, from: m.sender, text: m.body, time: fmtTime(m.created_at) });
+    });
 
     PROFILES = {};
     profs.forEach(function(p){
@@ -2526,10 +2607,10 @@
         memberSince: 'En TaskFlow desde ' + new Date(p.created_at).getFullYear(), completed: [] };
     });
     jobs.forEach(function(j){
-      if(PROFILES[j.user_id]) PROFILES[j.user_id].completed.push({ title: j.title, client: j.client_name, rating: Number(j.rating), comment: j.comment, date: fmtDate(j.done_on), price: j.price });
+      if(PROFILES[j.user_id]) PROFILES[j.user_id].completed.push({ title: j.title, client: j.client_name, rating: Number(j.rating), comment: j.comment, date: fmtDate(j.done_on) });
     });
     REVIEWS.forEach(function(v){
-      if(PROFILES[v.target]) PROFILES[v.target].completed.push({ title: v.task_title || 'Tarea', client: v.author_name || 'Cuenta eliminada', rating: Number(v.rating), comment: v.comment || '', date: fmtDate(v.created_at), price: v.price || '', role: v.target_role });
+      if(PROFILES[v.target]) PROFILES[v.target].completed.push({ title: v.task_title || 'Tarea', client: v.author_name || 'Cuenta eliminada', rating: Number(v.rating), comment: v.comment || '', date: fmtDate(v.created_at), role: v.target_role });
     });
     if(currentUser && PROFILES[currentUser.id]){
       PROFILES[currentUser.id].email = currentUser.email;
@@ -2538,17 +2619,17 @@
 
     TASKS = tasks.map(function(t){
       return { id: t.id, tag: t.tag, title: t.title, cardDesc: t.card_desc, desc: String(t.description).split(/\n\n+/),
-        price: t.price, date: t.deadline ? fmtDate(t.deadline) : 'Sin fecha límite', owner: t.owner };
+        date: t.deadline ? fmtDate(t.deadline) : 'Sin fecha límite', owner: t.owner };
     });
     CANDIDATES = {}; TASK_STATUS = {}; CHATS = {};
     apps.forEach(function(a){
       var p = PROFILES[a.user_id];
       if(!p) return;
-      (CANDIDATES[a.task_id] = CANDIDATES[a.task_id] || []).push({ userId: a.user_id, name: p.name, rating: ratingOf(p), price: a.price, message: a.message });
+      (CANDIDATES[a.task_id] = CANDIDATES[a.task_id] || []).push({ userId: a.user_id, name: p.name, rating: ratingOf(p), message: a.message });
     });
     tasks.forEach(function(t){
       var w = t.assigned_to && PROFILES[t.assigned_to];
-      if(w) TASK_STATUS[t.id] = { status: 'asignada', assignedTo: w.name, assignedUserId: t.assigned_to, agreedPrice: t.agreed_price || t.price, completed: !!t.completed_at, completedAt: t.completed_at || null };
+      if(w) TASK_STATUS[t.id] = { status: 'asignada', assignedTo: w.name, assignedUserId: t.assigned_to, completed: !!t.completed_at, completedAt: t.completed_at || null };
     });
     msgs.forEach(function(m){
       (CHATS[m.task_id] = CHATS[m.task_id] || []).push({ system: m.system, from: m.sender, text: m.body, time: fmtTime(m.created_at) });
@@ -2559,10 +2640,10 @@
   }
 
   function scheduleReload(){ clearTimeout(reloadTimer); reloadTimer = setTimeout(loadAll, 250); }
-  var modChannel = null;
+  var modChannel = null, preChannel = null;
   function unsubscribeRealtime(){
-    if(sb){ if(channel) sb.removeChannel(channel); if(modChannel) sb.removeChannel(modChannel); }
-    channel = null; modChannel = null;
+    if(sb){ if(channel) sb.removeChannel(channel); if(modChannel) sb.removeChannel(modChannel); if(preChannel) sb.removeChannel(preChannel); }
+    channel = null; modChannel = null; preChannel = null;
   }
   function subscribeRealtime(){
     unsubscribeRealtime();
@@ -2577,6 +2658,9 @@
       modChannel.on('postgres_changes', { event: '*', schema: 'public', table: table }, scheduleReload);
     });
     modChannel.subscribe();
+    preChannel = sb.channel('taskflow-prechat');
+    preChannel.on('postgres_changes', { event: '*', schema: 'public', table: 'candidate_messages' }, scheduleReload);
+    preChannel.subscribe();
   }
 
   async function applySession(session){
@@ -2593,7 +2677,7 @@
       }
       subscribeRealtime();
     } else {
-      currentUser = null; currentChatTaskId = null; currentCandTaskId = null; isAdmin = false;
+      currentUser = null; currentChatTaskId = null; currentCandTaskId = null; currentPre = null; isAdmin = false;
       unsubscribeRealtime();
       await loadAll();
     }
@@ -2624,6 +2708,7 @@
   renderTasks();
   renderMisTareas();
   renderPendientes();
+  renderCandidaturas();
   renderNavAccount();
   renderContacto();
   initPrivacy();
